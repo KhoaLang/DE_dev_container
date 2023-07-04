@@ -1,0 +1,9 @@
+{
+	"name": "Existing Dockerfile",
+	"build": {
+		"context": "..",
+		"dockerfile": "../Dockerfile",
+		"target": "spark-other"
+	},
+	"forwardPorts": [8080,7077,4040]
+}

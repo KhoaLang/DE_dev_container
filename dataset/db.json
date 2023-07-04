@@ -1,0 +1,78 @@
+{
+    "school": {
+      "name": "ABC High School",
+      "grades": [
+        {
+          "grade": 10,
+          "classes": [
+            {
+              "class": "Science",
+              "students": [
+                {
+                  "name": "John Doe",
+                  "age": 16,
+                  "gender": "Male"
+                },
+                {
+                  "name": "Jane Smith",
+                  "age": 15,
+                  "gender": "Female"
+                }
+              ]
+            },
+            {
+              "class": "Math",
+              "students": [
+                {
+                  "name": "Michael Johnson",
+                  "age": 16,
+                  "gender": "Male"
+                },
+                {
+                  "name": "Emily Davis",
+                  "age": 15,
+                  "gender": "Female"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "grade": 11,
+          "classes": [
+            {
+              "class": "English",
+              "students": [
+                {
+                  "name": "David Brown",
+                  "age": 17,
+                  "gender": "Male"
+                },
+                {
+                  "name": "Sophia Wilson",
+                  "age": 16,
+                  "gender": "Female"
+                }
+              ]
+            },
+            {
+              "class": "History",
+              "students": [
+                {
+                  "name": "William Clark",
+                  "age": 17,
+                  "gender": "Male"
+                },
+                {
+                  "name": "Olivia Taylor",
+                  "age": 16,
+                  "gender": "Female"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+  
