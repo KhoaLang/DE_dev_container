@@ -41,10 +41,10 @@ FROM spark-base as spark-master
 COPY ./setup_spark/master.sh /
 
 ENV SPARK_MASTER_PORT 7077
-ENV SPARK_MASTER_WEBUI_PORT 8080
+ENV SPARK_MASTER_WEBUI_PORT 8081
 ENV SPARK_MASTER_LOG /spark/logs
 
-EXPOSE 8080 7077 6066
+EXPOSE 8081 7077 6066
 
 CMD ["/bin/bash", "/master.sh"]
 
@@ -67,44 +67,59 @@ CMD ["/bin/bash", "/submit.sh"]
 
 # *******************************
 
-FROM spark-master as spark-other
+# FROM spark-master as spark-postgres
 
-RUN sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
-    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - 
+# # get public key for postgresql and pgadmin-web
+# RUN sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+#     && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+# # RUN curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg \
+# #     && sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
 
-RUN apt-get update && apt-get install -y postgresql-12
+# # USER root
+# #install postgres, pgadmin-web and configure web server
+# RUN apt-get update && apt-get install -y postgresql-12 
+# # pgadmin4-web
+# # ENV PGADMIN_DEFAULT_EMAIL "admin@admin.com"
+# # ENV PGADMIN_DEFAULT_PASSWORD "admin"
+# # RUN /usr/pgadmin4/bin/setup-web.sh
 
-USER postgres
-RUN /etc/init.d/postgresql start \
-    && psql --command "CREATE DATABASE airflow_db;" \
-    && psql --command "CREATE USER airflow WITH PASSWORD 'airflow';" \
-    && psql --command "GRANT ALL PRIVILEGES ON DATABASE airflow_db TO airflow;" \
-    && psql --command "ALTER USER airflow SET search_path = public;" \
-    && psql --command "GRANT ALL ON SCHEMA public TO airflow;"
+# USER postgres
+# RUN /etc/init.d/postgresql start \
+#     && psql --command "CREATE DATABASE airflow_db;" \
+#     && psql --command "CREATE USER airflow WITH PASSWORD 'airflow';" \
+#     && psql --command "GRANT ALL PRIVILEGES ON DATABASE airflow_db TO airflow;" \
+#     && psql --command "ALTER USER airflow SET search_path = public;" \
+#     && psql --command "GRANT ALL ON SCHEMA public TO airflow;"
+
+# EXPOSE 5432
+
+# USER root
+# WORKDIR /workspaces/de-env/
+
+# # *******************************
+
+# FROM spark-postgres as spark-airflow
 
 
-USER root
-WORKDIR /de-env/
+# RUN mkdir airflow \
+#     && pip install virtualenv \
+#     && cd airflow \
+#     && virtualenv env 
 
-RUN mkdir airflow \
-    && pip install virtualenv \
-    && cd airflow \
-    && virtualenv env 
+# COPY requirements.txt ./requirements.txt
 
-COPY requirements.txt ./requirements.txt
+# RUN pip install -r requirements.txt
 
-RUN pip install -r requirements.txt
+# COPY airflow.cfg /workspaces/de-env/airflow/airflow.cfg
 
-COPY airflow.cfg /root/airflow/airflow.cfg
+# RUN mkdir /workspaces/de-env/airflow/dags
 
-RUN mkdir /root/airflow/dags
+# ENV AIRFLOW_HOME=/workspaces/de-env/airflow
 
-ENV AIRFLOW_HOME=/root/airflow
+# RUN echo "source /workspaces/de-env/env/bin/activate" >> ~/.bashrc
 
-RUN echo "source /app/airflow_workspace/airflow_env/bin/activate" >> ~/.bashrc
+# RUN echo "service postgresql start" >> ~/.bashrc
 
-RUN echo "service postgresql start" >> ~/.bashrc
-
-WORKDIR /de-env/airflow
+# WORKDIR /workspaces/de-env/airflow
 
 
