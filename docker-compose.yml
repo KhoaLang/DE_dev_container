@@ -78,11 +78,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: spark-master
+      target: spark-others
     ports:
       - 8081:8081
       - 7077:7070
       - 6066:6066
+    volumes:
+      - ..:/workspaces/DE_dev_container:cached
+    command: /bin/sh -c "while sleep 1000; do :; done"
 
   postgres:
     image: postgres:13

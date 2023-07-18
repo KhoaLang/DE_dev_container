@@ -18,9 +18,11 @@ COPY ./setup_spark/finish-step.sh /
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-RUN apt-get update -y \
+RUN apt-get update -y\
     # && apt-get install python3 python3-pip wget nano sudo systemctl lsb-core -y \
-    && apt-get install curl wget sudo nano openjdk-8-jre python3 python3-pip lsb-core systemctl -y \
+    && apt-get install -y --no-install-recommends curl wget unzip sudo nano openjdk-8-jre python3 python3-pip systemctl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*do \
     && ln -s /lib64/ld-linux-x86-64.so.2 /lib/ld-linux-x86-64.so.2 \
     && chmod +x *.sh \
     && wget ${BASE_URL}/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
@@ -67,7 +69,11 @@ CMD ["/bin/bash", "/submit.sh"]
 
 # *******************************
 
-# FROM spark-master as spark-postgres
+FROM spark-master as spark-others
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && sudo ./aws/install
 
 # # get public key for postgresql and pgadmin-web
 # RUN sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
